@@ -1,7 +1,7 @@
 {
-  "name": "daurlah-api",
+  "name": "bankboo-api",
   "version": "0.0.1",
-  "description": "Daurlah API for Daurlah App",
+  "description": "Bankboo API for Bankboo App",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon ./index.js"

@@ -1,27 +1,22 @@
 const Sequelize = require('sequelize');
 const connection = require('../config/connection');
 
-const User = connection.define('user', {
+const Bank = connection.define('bank', {
   id: {
     type: Sequelize.UUID,
     primaryKey: true,
     defaultValue: Sequelize.UUIDV4,
   },
-  first_name: {
+  name: {
     type: Sequelize.STRING,
     allowNull: false,
     trim: true,
     validate: {
       notNull: {
-        message: 'first name is required'
+        message: 'name is required'
       }
     }
   },
-  last_name: {
-    type: Sequelize.STRING,
-    trim: true,
-  },
-  fullname: Sequelize.STRING,
   email: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -44,12 +39,12 @@ const User = connection.define('user', {
       }
     }
   },
-  mobile_phone: {
+  phone: {
     type: Sequelize.STRING,
     allowNull: false,
     validate: {
       notNull: {
-        message: 'mobile_phone is required'
+        message: 'phone is required'
       }
     }
   },
@@ -67,4 +62,4 @@ const User = connection.define('user', {
   },
 }, {underscored: true});
 
-module.exports = User;
+module.exports = Bank;
