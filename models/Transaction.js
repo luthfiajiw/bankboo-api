@@ -15,7 +15,18 @@ const Transaction = connection.define('transaction', {
   note: Sequelize.TEXT,
   weight: Sequelize.INTEGER,
   total_amount: Sequelize.INTEGER,
-}, {underscored: true});
+  created_at: {
+    type: Sequelize.DATE,
+    defaultValue: Sequelize.NOW,
+    name: 'created_at',
+    field: 'created_at'
+  },
+  updated_at: {
+      type: Sequelize.DATE,
+      name: 'updated_at',
+      field: 'updated_at'
+  }
+}, {underscored: true, timestamps: false});
 
 Transaction.belongsTo(User, {
   foreignKey: 'user_id'

@@ -9,7 +9,7 @@ const PaymentMethod = connection.define('payment_methods', {
   },
   code: Sequelize.STRING,
   name: Sequelize.STRING,
-}, {underscored: true});
+}, {underscored: true, timestamps: false});
 
 PaymentMethod.bulkCreate([
   {code: 'T-001', name: 'Tunai'}

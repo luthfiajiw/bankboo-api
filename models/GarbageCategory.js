@@ -20,7 +20,7 @@ const GarbageCategory = connection.define('garbage_categories', {
     ]
   },
   name: Sequelize.STRING,
-}, {underscored: true});
+}, {underscored: true, timestamps: false});
 
 GarbageCategory.bulkCreate([
   {category: 'bottles', name: 'Botol Bekas'},

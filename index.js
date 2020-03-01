@@ -8,8 +8,11 @@ const userModel = require('./models/User');
 const garbageCategoryModel = require('./models/GarbageCategory');
 const transactionModel = require('./models/Transaction');
 
+const userControllers = require('./controllers/userControllers');
+
 // Body parser
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
 
 // CORS
 app.use((req, res, next) => {
@@ -24,6 +27,9 @@ app.use((req, res, next) => {
 	};
 	next();
 });
+
+// Controllers
+userControllers(app);
 
 connection
   .sync()

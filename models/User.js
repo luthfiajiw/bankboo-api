@@ -46,12 +46,7 @@ const User = connection.define('user', {
   },
   mobile_phone: {
     type: Sequelize.STRING,
-    allowNull: false,
-    validate: {
-      notNull: {
-        message: 'mobile_phone is required'
-      }
-    }
+    allowNull: true,
   },
   address: Sequelize.TEXT,
   last_login: Sequelize.DATE,
@@ -65,6 +60,17 @@ const User = connection.define('user', {
       }
     }
   },
-}, {underscored: true});
+  created_at: {
+    type: Sequelize.DATE,
+    defaultValue: Sequelize.NOW,
+    name: 'created_at',
+    field: 'created_at'
+  },
+  updated_at: {
+      type: Sequelize.DATE,
+      name: 'updated_at',
+      field: 'updated_at'
+  }
+}, {underscored: true, timestamps: false});
 
 module.exports = User;

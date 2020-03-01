@@ -60,6 +60,17 @@ const Bank = connection.define('bank', {
       }
     }
   },
-}, {underscored: true});
+  created_at: {
+    type: Sequelize.DATE,
+    defaultValue: Sequelize.NOW,
+    name: 'created_at',
+    field: 'created_at'
+  },
+  updated_at: {
+      type: Sequelize.DATE,
+      name: 'updated_at',
+      field: 'updated_at'
+  }
+}, {underscored: true, timestamps: false});
 
 module.exports = Bank;
