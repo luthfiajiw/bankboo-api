@@ -9,6 +9,7 @@ const garbageCategoryModel = require('./models/GarbageCategory');
 const transactionModel = require('./models/Transaction');
 
 const userControllers = require('./controllers/userControllers');
+const bankControllers = require('./controllers/bankControllers');
 
 // Body parser
 app.use(express.urlencoded({extended: true}));
@@ -30,6 +31,7 @@ app.use((req, res, next) => {
 
 // Controllers
 userControllers(app);
+bankControllers(app);
 
 connection
   .sync()

@@ -10,7 +10,7 @@ const GarbageCategory = connection.define('garbage_categories', {
   category: {
     type: Sequelize.ENUM,
     values: [
-      'bottles',
+      'plastic',
       'paper',
       'cloth',
       'cans',
@@ -23,13 +23,13 @@ const GarbageCategory = connection.define('garbage_categories', {
 }, {underscored: true, timestamps: false});
 
 GarbageCategory.bulkCreate([
-  {category: 'bottles', name: 'Botol Bekas'},
-  {category: 'paper', name: 'Kertas/Koran Bekas'},
-  {category: 'cloth', name: 'Kain/Pakaian Bekas'},
-  {category: 'cans', name: 'Kaleng Bekas'},
-  {category: 'tires', name: 'Ban Bekas'},
-  {category: 'wood', name: 'Kayu Bekas'},
-  {category: 'iron', name: 'Besi Bekas'},
+  {category: 'plastic', name: 'Botol'},
+  {category: 'paper', name: 'Kertas/Kardus'},
+  {category: 'cloth', name: 'Kain/Pakaian'},
+  {category: 'cans', name: 'Kaleng'},
+  {category: 'tires', name: 'Ban'},
+  {category: 'wood', name: 'Kayu'},
+  {category: 'iron', name: 'Besi'},
 ]);
 
 module.exports = GarbageCategory;

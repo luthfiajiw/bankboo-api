@@ -1,19 +1,22 @@
 const Sequelize = require('sequelize');
 const connection = require('../config/connection');
 
-const GarbageCategory = require('./GarbageCategory');
 const User = require('./User');
-const SavingBook = require('./SavingBook');
+const Bank = require('./Bank');
 
-const Transaction = connection.define('transaction', {
+const number = Math.floor(1000000 + Math.random() * 9000000);
+
+const SavingBook = connection.define('saving_books', {
   id: {
     type: Sequelize.UUID,
     primaryKey: true,
     defaultValue: Sequelize.UUIDV4
   },
-  note: Sequelize.TEXT,
-  weight: Sequelize.INTEGER,
-  total_amount: Sequelize.INTEGER,
+  number: {
+    type: Sequelize.INTEGER,
+    defaultValue: number
+  },
+  balance: Sequelize.BIGINT,
   created_at: {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW,
@@ -27,16 +30,12 @@ const Transaction = connection.define('transaction', {
   }
 }, {underscored: true, timestamps: false});
 
-Transaction.belongsTo(User, {
-  foreignKey: 'user_id'
+SavingBook.belongsTo(User, {
+  foreignKey: 'customer_id'
 });
 
-Transaction.belongsTo(GarbageCategory, {
-  foreignKey: 'garbage_category_id'
+SavingBook.belongsTo(Bank, {
+  foreignKey: 'bank_id'
 });
 
-Transaction.belongsTo(SavingBook, {
-  foreignKey: 'saving_book_id'
-});
-
-module.exports = Transaction;
+module.exports = SavingBook;
