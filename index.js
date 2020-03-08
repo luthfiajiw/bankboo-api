@@ -11,6 +11,7 @@ const bankCustomerModel = require('./models/BankCustomer');
 
 const userControllers = require('./controllers/userControllers');
 const bankControllers = require('./controllers/bankControllers');
+const bankCustomerControllers = require('./controllers/bankCustomerControllers');
 const savingBookControllers = require('./controllers/savingBookControllers');
 
 // Body parser
@@ -34,6 +35,7 @@ app.use((req, res, next) => {
 // Controllers
 userControllers(app);
 bankControllers(app);
+bankCustomerControllers(app);
 savingBookControllers(app);
 
 connection

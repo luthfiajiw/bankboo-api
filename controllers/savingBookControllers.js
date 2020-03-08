@@ -18,7 +18,6 @@ module.exports = function(app) {
   app.get(`${endpoint_ver}/saving-books`, checkAuth, (req, res, next) => {
     const { user_id } = req.userData;
     const { page, perPage } = pageQueryHelper(req.query);
-    console.log(user_id);
 
     SavingBook.findAndCountAll({
       where: { customer_id: user_id },

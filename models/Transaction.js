@@ -33,6 +33,7 @@ Transaction.belongsTo(User, {
 });
 
 Transaction.belongsTo(GarbageCategory, {
+  as: 'garbage_category',
   foreignKey: 'garbage_category_id',
   constraints: false,
 });

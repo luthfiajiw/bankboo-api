@@ -20,11 +20,13 @@ const BankCustomer = connection.define('bank_customers', {
 }, {underscored: true, timestamps: false});
 
 BankCustomer.belongsTo(User, {
+  as: 'customer',
   foreignKey: 'customer_id',
   constraints: false,
 });
 
 BankCustomer.belongsTo(Bank, {
+  as: 'bank',
   foreignKey: 'bank_id',
   constraints: false,
 });
