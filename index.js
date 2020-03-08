@@ -7,9 +7,11 @@ const app = express();
 const userModel = require('./models/User');
 const garbageCategoryModel = require('./models/GarbageCategory');
 const transactionModel = require('./models/Transaction');
+const bankCustomerModel = require('./models/BankCustomer');
 
 const userControllers = require('./controllers/userControllers');
 const bankControllers = require('./controllers/bankControllers');
+const savingBookControllers = require('./controllers/savingBookControllers');
 
 // Body parser
 app.use(express.urlencoded({extended: true}));
@@ -32,6 +34,7 @@ app.use((req, res, next) => {
 // Controllers
 userControllers(app);
 bankControllers(app);
+savingBookControllers(app);
 
 connection
   .sync()

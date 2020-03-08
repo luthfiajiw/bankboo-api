@@ -1,8 +1,6 @@
 const Sequelize = require('sequelize');
 const connection = require('../config/connection');
 
-const code = Math.floor(100000 + Math.random() * 900000);
-
 const Bank = connection.define('bank', {
   id: {
     type: Sequelize.UUID,
@@ -11,7 +9,7 @@ const Bank = connection.define('bank', {
   },
   code: {
     type: Sequelize.INTEGER,
-    defaultValue: code,
+    defaultValue: Math.floor(100000 + Math.random() * 900000),
   },
   name: {
     type: Sequelize.STRING,

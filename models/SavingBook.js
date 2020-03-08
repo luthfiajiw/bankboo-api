@@ -4,8 +4,6 @@ const connection = require('../config/connection');
 const User = require('./User');
 const Bank = require('./Bank');
 
-const number = Math.floor(1000000 + Math.random() * 9000000);
-
 const SavingBook = connection.define('saving_books', {
   id: {
     type: Sequelize.UUID,
@@ -14,9 +12,12 @@ const SavingBook = connection.define('saving_books', {
   },
   number: {
     type: Sequelize.INTEGER,
-    defaultValue: number
+    defaultValue: Math.floor(100000 + Math.random() * 900000)
   },
-  balance: Sequelize.BIGINT,
+  balance:{
+    type:  Sequelize.BIGINT,
+    defaultValue: 0
+  },
   created_at: {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW,
@@ -31,11 +32,15 @@ const SavingBook = connection.define('saving_books', {
 }, {underscored: true, timestamps: false});
 
 SavingBook.belongsTo(User, {
-  foreignKey: 'customer_id'
+  as: 'customer',
+  foreignKey: 'customer_id',
+  constraints: false,
 });
 
 SavingBook.belongsTo(Bank, {
-  foreignKey: 'bank_id'
+  as: 'bank',
+  foreignKey: 'bank_id',
+  constraints: false,
 });
 
 module.exports = SavingBook;

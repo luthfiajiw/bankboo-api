@@ -6,11 +6,11 @@ const pageQueryHelper = require('../helpers/pageQueryHelper');
 const responseHelper = require('../helpers/responseHelper');
 const paginationHelper = require('../helpers/paginationHelper');
 const errorResponseHelper = require('../helpers/errorResponseHelper');
-const { endpoint } = require('../config/url');
+const { endpoint_ver } = require('../config/url');
 
 module.exports = function(app) {
   // Get customers data
-  app.get(`${endpoint}/user/customers`, (req, res) => {
+  app.get(`${endpoint_ver}/user/customers`, (req, res) => {
     const { page, perPage } = pageQueryHelper(req.query);
     User.findAndCountAll({
       limit: perPage,
@@ -31,7 +31,7 @@ module.exports = function(app) {
   });
 
   // Customer Signin
-  app.post(`${endpoint}/customer/signin`, (req, res, next) => {
+  app.post(`${endpoint_ver}/customer/signin`, (req, res, next) => {
     const { email, password } = req.body;
 
     User.findAll({ where: { email } })
@@ -64,7 +64,7 @@ module.exports = function(app) {
   })
 
   // Customer Signup
-  app.post(`${endpoint}/customer/signup`, (req, res, next) => {
+  app.post(`${endpoint_ver}/customer/signup`, (req, res, next) => {
     const { type, first_name, last_name, email, password, password2 } = req.body;
 
     // Check the length of password

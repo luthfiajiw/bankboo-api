@@ -28,15 +28,18 @@ const Transaction = connection.define('transaction', {
 }, {underscored: true, timestamps: false});
 
 Transaction.belongsTo(User, {
-  foreignKey: 'user_id'
+  foreignKey: 'user_id',
+  constraints: false,
 });
 
 Transaction.belongsTo(GarbageCategory, {
-  foreignKey: 'garbage_category_id'
+  foreignKey: 'garbage_category_id',
+  constraints: false,
 });
 
 Transaction.belongsTo(SavingBook, {
-  foreignKey: 'saving_book_id'
+  foreignKey: 'saving_book_id',
+  constraints: false,
 });
 
 module.exports = Transaction;

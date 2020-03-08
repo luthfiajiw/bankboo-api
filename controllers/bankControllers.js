@@ -6,11 +6,11 @@ const pageQueryHelper = require('../helpers/pageQueryHelper');
 const responseHelper = require('../helpers/responseHelper');
 const paginationHelper = require('../helpers/paginationHelper');
 const errorResponseHelper = require('../helpers/errorResponseHelper');
-const { endpoint } = require('../config/url');
+const { endpoint_ver } = require('../config/url');
 
 module.exports = function(app) {
   // Get banks data
-  app.get(`${endpoint}/user/banks`, (req, res) => {
+  app.get(`${endpoint_ver}/user/banks`, (req, res) => {
     const { page, perPage } = pageQueryHelper(req.query);
     Bank.findAndCountAll({
       limit: perPage,
@@ -31,7 +31,7 @@ module.exports = function(app) {
   });
 
   // Bank Signin
-  app.post(`${endpoint}/bank/signin`, (req, res, next) => {
+  app.post(`${endpoint_ver}/bank/signin`, (req, res, next) => {
     const { email, password } = req.body;
 
     Bank.findAll({ where: { email } })
@@ -64,7 +64,7 @@ module.exports = function(app) {
   });
 
   // Bank Signup
-  app.post(`${endpoint}/bank/signup`, (req, res, next) => {
+  app.post(`${endpoint_ver}/bank/signup`, (req, res, next) => {
     const { name, phone, email, address, password, password2 } = req.body;
 
     // Check the length of password
