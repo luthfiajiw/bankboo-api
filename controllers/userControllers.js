@@ -54,7 +54,8 @@ module.exports = function(app) {
             return res.status(200).json({
               statusCode: 200,
               message: 'authenticaiton successful',
-              token
+              type: 'Bearer',
+              access_token: token
             })
           } else {
             return res.status(401).json(errorResponseHelper(401, 'authentication failed, please check you email or password'))
