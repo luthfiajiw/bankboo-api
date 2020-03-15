@@ -52,7 +52,7 @@ module.exports = function(app) {
             }, 'secretBankboo');
 
             return res.status(200).json({
-              statusCode: 200,
+              status_code: 200,
               message: 'authenticaiton successful',
               token
             })
@@ -106,15 +106,15 @@ module.exports = function(app) {
             newBank.save()
               .then(bank => {
                 res.status(201).json({
-                  statusCode: 201,
+                  status_code: 201,
                   message: 'new bank has been created',
-                  bankCreated: bank
+                  result: bank
                 });
               })
               .catch(err => {
                 res.status(400).json({
                   error: {
-                    statusCode: 400,
+                    status_code: 400,
                     message: err
                   }
                 });

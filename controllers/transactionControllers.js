@@ -59,9 +59,9 @@ module.exports = function(app) {
     .then(transaction => {
       connection.query(`UPDATE saving_books SET balance = balance + ${total_amount} WHERE id = '${saving_book_id}'`, { raw: true });
       res.status(201).json({
-        statusCode: 201,
+        status_code: 201,
         message: 'new transaction has been created',
-        transactionCreated: transaction
+        result: transaction
       })
     })
     .catch(err => {
@@ -69,15 +69,42 @@ module.exports = function(app) {
     });
   });
 
+  // Detail Transaction
+  app.get(`${endpoint_ver}/transactions/:transactionId`, checkAuth, (req, res, next) => {
+    const { transactionId } = req.params;
+
+    Transaction.findOne({
+      where: { id: transactionId },
+      attributes: { exclude: ['garbage_category_id', 'saving_book_id', 'user_id'] },
+      include: [{
+        model: GarbageCategory,
+        as: 'garbage_category',
+      }]
+    })
+    .then(transaction => {
+      if (transaction === null) {
+        res.status(404).json(errorResponseHelper(404, 'transaction not found'));
+      }
+
+      res.status(200).json({
+        status_code: 200,
+        message: 'successful',
+        result: transaction
+      });
+    })
+    .catch(err => {
+      res.status(500).json(errorResponseHelper(500, 'Internal Server Error'));
+    });
+  })
+
   // Delete Transaction
   app.delete(`${endpoint_ver}/transactions/:transactionId`, checkAuth, (req, res, next) => {
     const { transactionId } = req.params;
-    console.log(transactionId);
 
     Transaction.destroy({ where: {id: transactionId} })
     .then(() => {
       res.status(200).json({
-        statusCode: 200,
+        status_code: 200,
         message: 'transaction deleted'
       });
     })

@@ -70,7 +70,7 @@ module.exports = function(app) {
       res.status(201).json({
         statusCode: 201,
         message: 'new saving book has been created',
-        savingBookCreated: savingBook
+        result: savingBook
       });
     })
     .catch(err => {
@@ -81,5 +81,41 @@ module.exports = function(app) {
         }
       });
     })
+  });
+
+  // Detail Saving Book
+  app.get(`${endpoint_ver}/saving-books/:savingBookId`, checkAuth, (req, res, next) => {
+    const { savingBookId } = req.params;
+
+    SavingBook.findOne({
+      where: { id: savingBookId },
+      attributes: { exclude: ['customer_id', 'bank_id'] },
+      include: [
+        {
+          model: User,
+          as: 'customer',
+          attributes: {exclude: ['last_login', 'password', 'created_at', 'updated_at']}
+        },
+        {
+          model: Bank,
+          as: 'bank',
+          attributes: {exclude: ['last_login', 'password', 'created_at', 'updated_at']}
+        }
+      ]
+    })
+    .then(savingBook => {
+      if(savingBook === null) {
+        res.status(404).json(errorResponseHelper(404, 'saving book not found'))
+      }
+
+      res.status(200).json({
+        status_code: 200,
+        message: 'successful',
+        result: savingBook
+      });
+    })
+    .catch(err => {
+      res.status(500).json(errorResponseHelper(500, 'Internal Server Error'));
+    });
   });
 };
