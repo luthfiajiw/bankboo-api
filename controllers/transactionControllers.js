@@ -97,19 +97,66 @@ module.exports = function(app) {
     });
   })
 
+  // Edit Transaction
+  app.patch(`${endpoint_ver}/transactions/:transactionId`, checkAuth, (req, res, next) => {
+    const { transactionId }  = req.params;
+    const { garbage_category_id, note, weight, total_amount } = req.body;
+
+    let updatedTransaction = {};
+    if (garbage_category_id !== undefined) updatedTransaction['garbage_category_id'] = garbage_category_id;
+    if (note !== undefined) updatedTransaction['note'] = note;
+    if (weight !== undefined) updatedTransaction['weight'] = weight;
+    if (total_amount !== undefined) updatedTransaction['total_amount'] = total_amount;
+
+    Transaction.update(updatedTransaction, { where: {id: transactionId} })
+    .then(() => {
+      Transaction.findOne({
+        where: { id: transactionId },
+        attributes: { exclude: ['garbage_category_id', 'saving_book_id', 'user_id'] },
+        include: [{
+          model: GarbageCategory,
+          as: 'garbage_category',
+        }]
+      })
+      .then(transaction => {
+        if (transaction === null) {
+          res.status(404).json(errorResponseHelper(404, 'transaction not found'));
+        }
+
+        res.status(200).json({
+          status_code: 200,
+          message: 'successful',
+          result: transaction
+        });
+      })
+      .catch(err => {
+        res.status(500).json(errorResponseHelper(500, 'Internal Server Error'));
+      });
+    })
+    .catch(() => res.status(404).json(errorResponseHelper(404, 'transaction not found')))
+  });
+
   // Delete Transaction
   app.delete(`${endpoint_ver}/transactions/:transactionId`, checkAuth, (req, res, next) => {
     const { transactionId } = req.params;
 
-    Transaction.destroy({ where: {id: transactionId} })
-    .then(() => {
-      res.status(200).json({
-        status_code: 200,
-        message: 'transaction deleted'
+    Transaction.findByPk(transactionId)
+    .then(transaction => {
+      if (transaction === null) {
+        res.status(404).json(errorResponseHelper(404, 'transaction not found'));
+      }
+
+      Transaction.destroy({ where: {id: transactionId} })
+      .then(() => {
+        connection.query(`UPDATE saving_books SET balance = balance - ${transaction.dataValues.total_amount} WHERE id = '${transaction.dataValues.saving_book_id}'`, { raw: true });
+        res.status(200).json({
+          status_code: 200,
+          message: 'transaction deleted'
+        });
+      })
+      .catch(() => {
+        res.status(500).json(errorResponseHelper(500, 'Internal Server Error'));
       });
-    })
-    .catch(() => {
-      res.status(500).json(errorResponseHelper(500, 'Internal Server Error'));
     })
   })
 };
