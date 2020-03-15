@@ -13,6 +13,7 @@ const userControllers = require('./controllers/userControllers');
 const bankControllers = require('./controllers/bankControllers');
 const bankCustomerControllers = require('./controllers/bankCustomerControllers');
 const savingBookControllers = require('./controllers/savingBookControllers');
+const transactionControllers = require('./controllers/transactionControllers');
 
 // Body parser
 app.use(express.urlencoded({extended: true}));
@@ -37,6 +38,7 @@ userControllers(app);
 bankControllers(app);
 bankCustomerControllers(app);
 savingBookControllers(app);
+transactionControllers(app);
 
 connection
   .sync()

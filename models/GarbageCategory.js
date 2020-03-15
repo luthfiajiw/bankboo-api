@@ -22,14 +22,14 @@ const GarbageCategory = connection.define('garbage_categories', {
   name: Sequelize.STRING,
 }, {underscored: true, timestamps: false});
 
-GarbageCategory.bulkCreate([
-  {category: 'plastic', name: 'Botol'},
-  {category: 'paper', name: 'Kertas/Kardus'},
-  {category: 'cloth', name: 'Kain/Pakaian'},
-  {category: 'cans', name: 'Kaleng'},
-  {category: 'tires', name: 'Ban'},
-  {category: 'wood', name: 'Kayu'},
-  {category: 'iron', name: 'Besi'},
-]);
+// GarbageCategory.bulkCreate([
+//   {category: 'plastic', name: 'Botol'},
+//   {category: 'paper', name: 'Kertas/Kardus'},
+//   {category: 'cloth', name: 'Kain/Pakaian'},
+//   {category: 'cans', name: 'Kaleng'},
+//   {category: 'tires', name: 'Ban'},
+//   {category: 'wood', name: 'Kayu'},
+//   {category: 'iron', name: 'Besi'},
+// ]);
 
 module.exports = GarbageCategory;
