@@ -23,7 +23,7 @@ const GarbageCategory = connection.define('garbage_categories', {
 }, {underscored: true, timestamps: false});
 
 // GarbageCategory.bulkCreate([
-//   {category: 'plastic', name: 'Botol'},
+//   {category: 'plastic', name: 'Botol/Plastik'},
 //   {category: 'paper', name: 'Kertas/Kardus'},
 //   {category: 'cloth', name: 'Kain/Pakaian'},
 //   {category: 'cans', name: 'Kaleng'},

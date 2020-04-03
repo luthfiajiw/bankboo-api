@@ -12,6 +12,7 @@ const responseHelper = require('../helpers/responseHelper');
 const paginationHelper = require('../helpers/paginationHelper');
 const errorResponseHelper = require('../helpers/errorResponseHelper');
 const { endpoint_ver } = require('../config/url');
+const moment = require('moment');
 
 module.exports = function(app) {
   app.get(`${endpoint_ver}/transactions`, checkAuth, (req, res, next) => {
@@ -57,7 +58,9 @@ module.exports = function(app) {
 
     newTransaction.save()
     .then(transaction => {
-      connection.query(`UPDATE saving_books SET balance = balance + ${total_amount} WHERE id = '${saving_book_id}'`, { raw: true });
+      connection.query(`UPDATE saving_books SET balance = balance + ${total_amount} WHERE id = '${saving_book_id}'`, { raw: true })
+      .then(([result, metadata]) => console.log(metadata));
+
       res.status(201).json({
         status_code: 201,
         message: 'new transaction has been created',
@@ -108,32 +111,44 @@ module.exports = function(app) {
     if (weight !== undefined) updatedTransaction['weight'] = weight;
     if (total_amount !== undefined) updatedTransaction['total_amount'] = total_amount;
 
-    Transaction.update(updatedTransaction, { where: {id: transactionId} })
-    .then(() => {
-      Transaction.findOne({
-        where: { id: transactionId },
-        attributes: { exclude: ['garbage_category_id', 'saving_book_id', 'user_id'] },
-        include: [{
-          model: GarbageCategory,
-          as: 'garbage_category',
-        }]
-      })
-      .then(transaction => {
-        if (transaction === null) {
-          res.status(404).json(errorResponseHelper(404, 'transaction not found'));
-        }
+    Transaction.findByPk(transactionId)
+    .then(transaction => {
+      if (transaction === null) {
+        res.status(404).json(errorResponseHelper(404, 'transaction not found'));
+      }
 
-        res.status(200).json({
-          status_code: 200,
-          message: 'successful',
-          result: transaction
+      const prevTotalAmount = transaction.dataValues.total_amount;
+
+      Transaction.update(updatedTransaction, { where: {id: transactionId} })
+      .then(() => {
+        Transaction.findOne({
+          where: { id: transactionId },
+          attributes: { exclude: ['garbage_category_id', 'user_id'] },
+          include: [{
+            model: GarbageCategory,
+            as: 'garbage_category',
+          }]
+        })
+        .then(transaction => {
+          if (total_amount !== undefined) {
+            connection.query(`UPDATE saving_books SET balance = balance - ${prevTotalAmount} + ${total_amount} WHERE id = '${transaction.dataValues.saving_book_id}'`, { raw: true })
+            .then(([result, metadata]) => console.log(metadata));
+          }
+
+          res.status(200).json({
+            status_code: 200,
+            message: 'successful',
+            result: transaction
+          });
+        })
+        .catch(err => {
+          res.status(500).json(errorResponseHelper(500, 'Internal Server Error'));
         });
       })
-      .catch(err => {
-        res.status(500).json(errorResponseHelper(500, 'Internal Server Error'));
-      });
+      .catch((err) => res.status(404).json(errorResponseHelper(404, err)))
+
     })
-    .catch(() => res.status(404).json(errorResponseHelper(404, 'transaction not found')))
+
   });
 
   // Delete Transaction

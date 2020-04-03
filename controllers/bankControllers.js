@@ -54,6 +54,7 @@ module.exports = function(app) {
             return res.status(200).json({
               status_code: 200,
               message: 'authenticaiton successful',
+              type: 'Bearer',
               token
             })
           } else {
