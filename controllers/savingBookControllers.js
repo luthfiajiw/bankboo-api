@@ -20,10 +20,10 @@ module.exports = function(app) {
     const { page, perPage } = pageQueryHelper(req.query);
 
     SavingBook.findAndCountAll({
-      where: { customer_id: user_id },
+      where: { user_id },
       limit: perPage,
       offset: (page - 1) * 10,
-      attributes: { exclude: ['customer_id', 'bank_id'] },
+      attributes: { exclude: ['user_id', 'bank_id'] },
       include: [
         {
           model: User,

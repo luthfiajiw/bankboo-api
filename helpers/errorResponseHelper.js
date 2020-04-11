@@ -1,7 +1,7 @@
 function errorResponseHelper(statusCode, message) {
   return {
     error: {
-      statusCode,
+      status_code: statusCode,
       message
     }
   };

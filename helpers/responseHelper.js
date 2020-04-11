@@ -1,6 +1,6 @@
 function responseHelper(res, datas) {
 	res.status(200).json({
-		statusCode: 200,
+		status_code: 200,
 		message: 'successful',
 		data: {
 			count: datas.count === undefined ? 0 : datas.count,

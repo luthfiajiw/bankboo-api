@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const connection = require('../config/connection');
 
 const Bank = require('./Bank');
-const BankCustomer = require('./BankCustomer');
+const User = require('./User');
 
 const SavingBook = connection.define('saving_books', {
   id: {
@@ -20,9 +20,9 @@ const SavingBook = connection.define('saving_books', {
   },
 }, {underscored: true, timestamps: true});
 
-SavingBook.belongsTo(BankCustomer, {
-  as: 'bank_customer',
-  foreignKey: 'bank_customer_id',
+SavingBook.belongsTo(User, {
+  as: 'customer',
+  foreignKey: 'user_id',
   constraints: false,
 });
 

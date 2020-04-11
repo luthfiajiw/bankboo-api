@@ -66,7 +66,7 @@ module.exports = function(app) {
 
   // Customer Signup
   app.post(`${endpoint_ver}/customer/signup`, (req, res, next) => {
-    const { type, first_name, last_name, email, password, password2 } = req.body;
+    const { first_name, last_name, mobile_phone, email, password, password2 } = req.body;
 
     // Check the length of password
     if (password.length < 6) {
@@ -85,9 +85,16 @@ module.exports = function(app) {
         if (user.length > 0) {
           return res.status(409).json(errorResponseHelper(409, 'email is already registered'));
         } else {
+          let splitPhone = mobile_phone.split('');
+          if (mobile_phone[0] === '0') {
+            splitPhone.splice(0, 1, '+62');
+          } else {
+            splitPhone.unshift('+62');
+          }
+
           const newUser = User.build({
-            type: type,
             first_name: first_name,
+            mobile_phone: splitPhone.join(''),
             last_name: last_name,
             fullname: `${first_name} ${last_name}`,
             email: email,

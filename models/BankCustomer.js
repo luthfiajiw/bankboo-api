@@ -34,4 +34,10 @@ BankCustomer.belongsTo(Bank, {
   constraints: false,
 });
 
+BankCustomer.belongsTo(SavingBook, {
+  as: 'saving_book',
+  foreignKey: 'saving_book_id',
+  constraints: false,
+});
+
 module.exports = BankCustomer;
