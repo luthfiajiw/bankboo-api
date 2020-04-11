@@ -2,10 +2,9 @@ const Sequelize = require('sequelize');
 const connection = require('../config/connection');
 
 const GarbageCategory = require('./GarbageCategory');
-const User = require('./User');
 const SavingBook = require('./SavingBook');
 
-const Transaction = connection.define('transaction', {
+const Deposit = connection.define('deposit', {
   id: {
     type: Sequelize.UUID,
     primaryKey: true,
@@ -13,23 +12,19 @@ const Transaction = connection.define('transaction', {
   },
   note: Sequelize.TEXT,
   weight: Sequelize.INTEGER,
-  total_amount: Sequelize.INTEGER,
+  amount_per_kg: Sequelize.INTEGER,
 }, {underscored: true, timestamps: true});
 
-Transaction.belongsTo(User, {
-  foreignKey: 'user_id',
-  constraints: false,
-});
-
-Transaction.belongsTo(GarbageCategory, {
+Deposit.belongsTo(GarbageCategory, {
   as: 'garbage_category',
   foreignKey: 'garbage_category_id',
   constraints: false,
 });
 
-Transaction.belongsTo(SavingBook, {
+Deposit.belongsTo(SavingBook, {
+  as: 'saving_book',
   foreignKey: 'saving_book_id',
   constraints: false,
 });
 
-module.exports = Transaction;
+module.exports = Deposit;

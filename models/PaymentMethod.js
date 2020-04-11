@@ -11,8 +11,8 @@ const PaymentMethod = connection.define('payment_methods', {
   name: Sequelize.STRING,
 }, {underscored: true, timestamps: false});
 
-PaymentMethod.bulkCreate([
-  {code: 'T-001', name: 'Tunai'}
-])
+// PaymentMethod.bulkCreate([
+//   {code: 'T-001', name: 'Tunai'}
+// ])
 
 module.exports = PaymentMethod;;

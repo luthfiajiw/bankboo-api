@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-const Transaction = require('../models/Transaction');
+const Deposit = require('../models/Deposit');
 const SavingBook = require('../models/SavingBook');
 const User = require('../models/User');
 const GarbageCategory = require('../models/GarbageCategory');
@@ -15,11 +15,11 @@ const { endpoint_ver } = require('../config/url');
 const moment = require('moment');
 
 module.exports = function(app) {
-  app.get(`${endpoint_ver}/transactions`, checkAuth, (req, res, next) => {
+  app.get(`${endpoint_ver}/deposits`, checkAuth, (req, res, next) => {
     const { user_id } = req.userData;
     const { page, perPage } = pageQueryHelper(req.query);
 
-    Transaction.findAndCountAll({
+    Deposit.findAndCountAll({
       where: { user_id },
       limit: perPage,
       offset: (page - 1) * 10,
@@ -40,14 +40,14 @@ module.exports = function(app) {
     })
   });
 
-  // Create Transaction
-  app.post(`${endpoint_ver}/transactions`, checkAuth, (req, res, next) => {
+  // Create Deposit
+  app.post(`${endpoint_ver}/deposits`, checkAuth, (req, res, next) => {
     const { user_id } = req.userData;
     const {
       saving_book_id, garbage_category_id, note, weight, total_amount
     } = req.body;
 
-    const newTransaction = Transaction.build({
+    const newDeposit = Deposit.build({
       saving_book_id,
       garbage_category_id,
       user_id,
@@ -56,15 +56,15 @@ module.exports = function(app) {
       total_amount
     });
 
-    newTransaction.save()
-    .then(transaction => {
+    newDeposit.save()
+    .then(deposit => {
       connection.query(`UPDATE saving_books SET balance = balance + ${total_amount} WHERE id = '${saving_book_id}'`, { raw: true })
       .then(([result, metadata]) => console.log(metadata));
 
       res.status(201).json({
         status_code: 201,
-        message: 'new transaction has been created',
-        result: transaction
+        message: 'new deposit has been created',
+        result: deposit
       })
     })
     .catch(err => {
@@ -72,27 +72,27 @@ module.exports = function(app) {
     });
   });
 
-  // Detail Transaction
-  app.get(`${endpoint_ver}/transactions/:transactionId`, checkAuth, (req, res, next) => {
-    const { transactionId } = req.params;
+  // Detail Deposit
+  app.get(`${endpoint_ver}/deposits/:depositId`, checkAuth, (req, res, next) => {
+    const { depositId } = req.params;
 
-    Transaction.findOne({
-      where: { id: transactionId },
+    Deposit.findOne({
+      where: { id: depositId },
       attributes: { exclude: ['garbage_category_id', 'saving_book_id', 'user_id'] },
       include: [{
         model: GarbageCategory,
         as: 'garbage_category',
       }]
     })
-    .then(transaction => {
-      if (transaction === null) {
-        res.status(404).json(errorResponseHelper(404, 'transaction not found'));
+    .then(deposit => {
+      if (deposit === null) {
+        res.status(404).json(errorResponseHelper(404, 'deposit not found'));
       }
 
       res.status(200).json({
         status_code: 200,
         message: 'successful',
-        result: transaction
+        result: deposit
       });
     })
     .catch(err => {
@@ -100,45 +100,45 @@ module.exports = function(app) {
     });
   })
 
-  // Edit Transaction
-  app.patch(`${endpoint_ver}/transactions/:transactionId`, checkAuth, (req, res, next) => {
-    const { transactionId }  = req.params;
+  // Edit Deposit
+  app.patch(`${endpoint_ver}/deposits/:depositId`, checkAuth, (req, res, next) => {
+    const { depositId }  = req.params;
     const { garbage_category_id, note, weight, total_amount } = req.body;
 
-    let updatedTransaction = {};
-    if (garbage_category_id !== undefined) updatedTransaction['garbage_category_id'] = garbage_category_id;
-    if (note !== undefined) updatedTransaction['note'] = note;
-    if (weight !== undefined) updatedTransaction['weight'] = weight;
-    if (total_amount !== undefined) updatedTransaction['total_amount'] = total_amount;
+    let updatedDeposit = {};
+    if (garbage_category_id !== undefined) updatedDeposit['garbage_category_id'] = garbage_category_id;
+    if (note !== undefined) updatedDeposit['note'] = note;
+    if (weight !== undefined) updatedDeposit['weight'] = weight;
+    if (total_amount !== undefined) updatedDeposit['total_amount'] = total_amount;
 
-    Transaction.findByPk(transactionId)
-    .then(transaction => {
-      if (transaction === null) {
-        res.status(404).json(errorResponseHelper(404, 'transaction not found'));
+    Deposit.findByPk(depositId)
+    .then(deposit => {
+      if (deposit === null) {
+        res.status(404).json(errorResponseHelper(404, 'deposit not found'));
       }
 
-      const prevTotalAmount = transaction.dataValues.total_amount;
+      const prevTotalAmount = deposit.dataValues.total_amount;
 
-      Transaction.update(updatedTransaction, { where: {id: transactionId} })
+      Deposit.update(updatedDeposit, { where: {id: depositId} })
       .then(() => {
-        Transaction.findOne({
-          where: { id: transactionId },
+        Deposit.findOne({
+          where: { id: depositId },
           attributes: { exclude: ['garbage_category_id', 'user_id'] },
           include: [{
             model: GarbageCategory,
             as: 'garbage_category',
           }]
         })
-        .then(transaction => {
+        .then(deposit => {
           if (total_amount !== undefined) {
-            connection.query(`UPDATE saving_books SET balance = balance - ${prevTotalAmount} + ${total_amount} WHERE id = '${transaction.dataValues.saving_book_id}'`, { raw: true })
+            connection.query(`UPDATE saving_books SET balance = balance - ${prevTotalAmount} + ${total_amount} WHERE id = '${deposit.dataValues.saving_book_id}'`, { raw: true })
             .then(([result, metadata]) => console.log(metadata));
           }
 
           res.status(200).json({
             status_code: 200,
             message: 'successful',
-            result: transaction
+            result: deposit
           });
         })
         .catch(err => {
@@ -151,22 +151,22 @@ module.exports = function(app) {
 
   });
 
-  // Delete Transaction
-  app.delete(`${endpoint_ver}/transactions/:transactionId`, checkAuth, (req, res, next) => {
-    const { transactionId } = req.params;
+  // Delete Deposit
+  app.delete(`${endpoint_ver}/deposits/:depositId`, checkAuth, (req, res, next) => {
+    const { depositId } = req.params;
 
-    Transaction.findByPk(transactionId)
-    .then(transaction => {
-      if (transaction === null) {
-        res.status(404).json(errorResponseHelper(404, 'transaction not found'));
+    Deposit.findByPk(depositId)
+    .then(deposit => {
+      if (deposit === null) {
+        res.status(404).json(errorResponseHelper(404, 'deposit not found'));
       }
 
-      Transaction.destroy({ where: {id: transactionId} })
+      Deposit.destroy({ where: {id: depositId} })
       .then(() => {
-        connection.query(`UPDATE saving_books SET balance = balance - ${transaction.dataValues.total_amount} WHERE id = '${transaction.dataValues.saving_book_id}'`, { raw: true });
+        connection.query(`UPDATE saving_books SET balance = balance - ${deposit.dataValues.total_amount} WHERE id = '${deposit.dataValues.saving_book_id}'`, { raw: true });
         res.status(200).json({
           status_code: 200,
-          message: 'transaction deleted'
+          message: 'deposit deleted'
         });
       })
       .catch(() => {

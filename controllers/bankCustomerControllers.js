@@ -38,4 +38,8 @@ module.exports = function(app) {
       responseHelper(res, datas);
     })
   });
+
+  app.post(`${endpoint_ver}/bank-customers`, checkAuth, (req, res, next) => {
+
+  });
 };

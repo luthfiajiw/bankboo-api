@@ -60,12 +60,12 @@ module.exports = function(app) {
 
     newSavingBook.save()
     .then(savingBook => {
-      const newBankCustomer = BankCustomer.build({
-        bank_id,
-        customer_id: user_id,
-        saving_book_id: savingBook.id
-      })
-      newBankCustomer.save();
+      // const newBankCustomer = BankCustomer.build({
+      //   bank_id,
+      //   customer_id: user_id,
+      //   saving_book_id: savingBook.id
+      // })
+      // newBankCustomer.save();
 
       res.status(201).json({
         statusCode: 201,

@@ -6,14 +6,15 @@ const app = express();
 
 const userModel = require('./models/User');
 const garbageCategoryModel = require('./models/GarbageCategory');
-const transactionModel = require('./models/Transaction');
+const paymentMethodModel = require('./models/PaymentMethod');
+const depositModel = require('./models/Deposit');
 const bankCustomerModel = require('./models/BankCustomer');
 
 const userControllers = require('./controllers/userControllers');
 const bankControllers = require('./controllers/bankControllers');
 const bankCustomerControllers = require('./controllers/bankCustomerControllers');
 const savingBookControllers = require('./controllers/savingBookControllers');
-const transactionControllers = require('./controllers/transactionControllers');
+const depositControllers = require('./controllers/depositControllers');
 
 // Body parser
 app.use(express.urlencoded({extended: true}));
@@ -38,7 +39,7 @@ userControllers(app);
 bankControllers(app);
 bankCustomerControllers(app);
 savingBookControllers(app);
-transactionControllers(app);
+depositControllers(app);
 
 connection
   .sync()
