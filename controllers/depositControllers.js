@@ -36,6 +36,9 @@ module.exports = function(app) {
       }
       responseHelper(res, datas);
     })
+    .catch(err => {
+      res.status(400).json(errorResponseHelper(400, err));
+    });
   });
 
   // Create Deposit

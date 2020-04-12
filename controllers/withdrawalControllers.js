@@ -48,7 +48,7 @@ module.exports = function(app) {
     SavingBook.findByPk(saving_book_id)
     .then(savingBook => {
       if (savingBook.balance === 0) {
-        return res.status(400).json(errorResponseHelper(400, "cannot perform withdraw action, the balance of this saving book is empty"));
+        return res.status(403).json(errorResponseHelper(403, "cannot perform withdraw action, the balance of this saving book is empty"));
       } else {
         const newWithdrawal = Withdrawal.build({
           saving_book_id,
