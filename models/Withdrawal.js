@@ -24,3 +24,5 @@ Withdrawal.belongsTo(PaymentMethod, {
   foreignKey: 'payment_method_id',
   constraints: false
 })
+
+module.exports = Withdrawal;
