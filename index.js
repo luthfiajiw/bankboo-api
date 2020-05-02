@@ -51,7 +51,7 @@ withdrawalControllers(app);
 connection
   .sync()
   .then(() => {
-    const server = app.listen(process.env.PORT || 3000, () => {
+    const server = app.listen(isProd ? process.env.PORT : 3000, () => {
       console.log('Your port is listening to localhost 3000');
     });
   })
