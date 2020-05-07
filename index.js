@@ -1,6 +1,9 @@
 const express = require('express');
 const http = require('http');
 const connection = require('./config/connection');
+const helmet = require('helmet');
+const compression = require('compression');
+const cors = require('cors');
 
 const app = express();
 
@@ -18,11 +21,22 @@ const savingBookControllers = require('./controllers/savingBookControllers');
 const depositControllers = require('./controllers/depositControllers');
 const withdrawalControllers = require('./controllers/withdrawalControllers');
 
+require('dotenv').config();
+
+const isProd = process.env.NODE_ENV === 'production';
+const origin = {
+  origin: isProd ? 'https://www.bankboo-api.herokuapp.com' : '*'
+}
+
+app.use(compression());
+app.use(helmet());
+
 // Body parser
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
 // CORS
+app.use(cors(origin));
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
 	res.header(
