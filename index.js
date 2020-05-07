@@ -20,6 +20,8 @@ const bankCustomerControllers = require('./controllers/bankCustomerControllers')
 const savingBookControllers = require('./controllers/savingBookControllers');
 const depositControllers = require('./controllers/depositControllers');
 const withdrawalControllers = require('./controllers/withdrawalControllers');
+const garbageCategoryControllers = require('./controllers/garbageCategoryControllers');
+const paymentMethodControllers = require('./controllers/paymentMethodControllers');
 
 require('dotenv').config();
 
@@ -57,6 +59,8 @@ bankCustomerControllers(app);
 savingBookControllers(app);
 depositControllers(app);
 withdrawalControllers(app);
+garbageCategoryControllers(app);
+paymentMethodControllers(app);
 
 connection
   .sync()
