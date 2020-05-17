@@ -10,6 +10,10 @@ const Deposit = connection.define('deposit', {
     primaryKey: true,
     defaultValue: Sequelize.UUIDV4
   },
+  status: {
+    type: Sequelize.ENUM,
+    values: ['pending', 'succeed', 'failed']
+  },
   note: Sequelize.TEXT,
   weight: Sequelize.INTEGER,
   amount_per_kg: Sequelize.INTEGER,

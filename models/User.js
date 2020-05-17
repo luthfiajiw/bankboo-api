@@ -7,6 +7,10 @@ const User = connection.define('user', {
     primaryKey: true,
     defaultValue: Sequelize.UUIDV4,
   },
+  role: {
+    type: Sequelize.ENUM,
+    values: ['customer']
+  },
   first_name: {
     type: Sequelize.STRING,
     allowNull: false,

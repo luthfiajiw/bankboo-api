@@ -10,6 +10,10 @@ const Withdrawal = connection.define('withdrawal', {
     primaryKey: true,
     defaultValue: Sequelize.UUIDV4
   },
+  status: {
+    type: Sequelize.ENUM,
+    values: ['pending', 'succeed', 'failed']
+  },
   total_amount: Sequelize.INTEGER
 }, {underscored: true, timestamps: true});
 

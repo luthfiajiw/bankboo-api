@@ -48,7 +48,8 @@ module.exports = function(app) {
           if (isMatch) {
             const token = jwt.sign({
               email: user[0].email,
-              user_id: user[0].id
+              user_id: user[0].id,
+              role: user[0].role,
             }, 'secretBankboo');
 
             return res.status(200).json({
@@ -93,6 +94,7 @@ module.exports = function(app) {
           }
 
           const newUser = User.build({
+            role: 'customer',
             first_name: first_name,
             mobile_phone: splitPhone.join(''),
             last_name: last_name,
