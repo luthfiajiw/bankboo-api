@@ -48,9 +48,10 @@ module.exports = function(app) {
     SavingBook.findByPk(saving_book_id)
     .then(savingBook => {
       if (savingBook.balance === 0) {
-        return res.status(403).json(errorResponseHelper(403, "cannot perform withdraw action, the balance of this saving book is empty"));
+        return res.status(403).json(errorResponseHelper(403, "cannot perform withdraw action, the balance of this saving book is 0"));
       } else {
         const newWithdrawal = Withdrawal.build({
+          status: 'pending',
           saving_book_id,
           payment_method_id,
           total_amount,
@@ -58,11 +59,9 @@ module.exports = function(app) {
 
         newWithdrawal.save()
         .then(withdrawal => {
-          connection.query(`UPDATE saving_books SET balance = balance - ${total_amount} WHERE id = '${saving_book_id}'`, { raw: true });
-
           res.status(201).json({
             status_code: 201,
-            message: 'wtihdrawal successful',
+            message: 'new withdrawal has been requested',
             result: withdrawal
           })
         })
@@ -71,5 +70,91 @@ module.exports = function(app) {
         })
       }
     })
+  });
+
+  // Bank change withdrawal status to succeed/failed
+  app.patch(`${endpoint_ver}/withdrawals/:withdrawalId`, checkAuth, (req, res, next) => {
+    const { bank_id } = req.userData;
+    const { status } = req.body;
+    const { withdrawalId } = req.params;
+
+    if (bank_id === undefined) {
+      return res.status(403).json(errorResponseHelper(403, 'only banks can change the status'));
+    } else {
+      Withdrawal.findOne({
+        where: { id : withdrawalId }
+      })
+      .then(withdrawal => {
+        if (withdrawal === null) {
+          res.status(404).json(errorResponseHelper(404, 'withdrawal request not found'));
+        }
+
+        if (withdrawal.dataValues.status === 'pending') {
+          const updatedWithdrawal = { status };
+          Withdrawal.update(updatedWithdrawal, {
+            where: { id: withdrawalId }
+          })
+          .then(() => {
+            Withdrawal.findOne({
+              where: { id: withdrawalId },
+              attributes: { exclude: ['payment_method_id'] },
+              include: [{
+                model: PaymentMethod,
+                as: 'payment_method',
+              }]
+            })
+            .then(withdrawal => {
+              const { saving_book_id, total_amount } = withdrawal.dataValues;
+
+              if (status === 'succeed') {
+                connection.query(`UPDATE saving_books SET balance = balance - ${total_amount} WHERE id = '${saving_book_id}'`, { raw: true });
+              }
+
+              res.status(200).json({
+                status_code: 200,
+                message: 'successful',
+                result: withdrawal
+              });
+            })
+            .catch(err => {
+              res.status(500).json(errorResponseHelper(500, err));
+            })
+          })
+          .catch(err => {
+            res.status(409).json(errorResponseHelper(409, err));
+          })
+        } else {
+          res.status(403).json(errorResponseHelper(403, `can't change the status`));
+        }
+      })
+    }
+  });
+
+  // Detail Withdrawal
+  app.get(`${endpoint_ver}/withdrawals/:withdrawalId`, checkAuth, (req, res, next) => {
+    const { withdrawalId } = req.params;
+
+    Withdrawal.findOne({
+      where: { id: withdrawalId },
+      attributes: { exclude: ['payment_method_id'] },
+      include: [{
+        model: PaymentMethod,
+        as: 'payment_method',
+      }]
+    })
+    .then(withdrawal => {
+      if (withdrawal === null) {
+        res.status(404).json(errorResponseHelper(404, 'withdrawal not found'));
+      }
+
+      res.status(200).json({
+        status_code: 200,
+        message: 'successful',
+        result: withdrawal
+      });
+    })
+    .catch(err => {
+      res.status(500).json(errorResponseHelper(500, err));
+    });
   })
 };

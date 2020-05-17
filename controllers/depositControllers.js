@@ -58,12 +58,9 @@ module.exports = function(app) {
 
     newDeposit.save()
     .then(deposit => {
-      // connection.query(`UPDATE saving_books SET balance = balance + ${amount_per_kg*weight} WHERE id = '${saving_book_id}'`, { raw: true })
-      // .then(([result, metadata]) => console.log(metadata));
-
       res.status(201).json({
         status_code: 201,
-        message: 'new deposit has been created',
+        message: 'new deposit has been requested',
         result: deposit
       })
     })
@@ -86,7 +83,7 @@ module.exports = function(app) {
       })
       .then((deposit) => {
         if (deposit === null) {
-          res.status(404).json(errorResponseHelper(404, 'deposit not found'));
+          res.status(404).json(errorResponseHelper(404, 'deposit request not found'));
         }
 
         if (deposit.dataValues.status === 'pending') {
