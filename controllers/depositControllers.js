@@ -97,13 +97,20 @@ module.exports = function(app) {
           .then(() => {
             Deposit.findOne({
               where: { id: depositId },
-              attributes: { exclude: ['garbage_category_id', 'saving_book_id'] },
+              attributes: { exclude: ['garbage_category_id'] },
               include: [{
                 model: GarbageCategory,
                 as: 'garbage_category',
               }]
             })
             .then(deposit => {
+              const { saving_book_id, weight, amount_per_kg } = deposit.dataValues;
+
+              if (status === 'succeed') {
+                connection.query(`UPDATE saving_books SET balance = balance + ${amount_per_kg*weight} WHERE id = '${saving_book_id}'`, { raw: true })
+                .then(([result, metadata]) => console.log(metadata));
+              }
+
               res.status(200).json({
                 status_code: 200,
                 message: 'successful',
@@ -113,6 +120,9 @@ module.exports = function(app) {
             .catch(err => {
               res.status(500).json(errorResponseHelper(500, err));
             });
+          })
+          .catch(err => {
+            res.status(409).json(errorResponseHelper(409, err));
           })
         } else {
           res.status(403).json(errorResponseHelper(403, `can't change the status`));
