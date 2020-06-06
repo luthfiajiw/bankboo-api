@@ -62,7 +62,7 @@ module.exports = function(app) {
             is_super_admin: admins[0].is_super_admin,
             is_accessing_payment_methods: admins[0].is_accessing_payment_methods,
             is_accessing_garbage_categories: admins[0].is_accessing_garbage_categories,
-          }, 'secretbankboo');
+          }, 'secretBankboo');
 
           return res.status(200).json({
             status_code: 200,
@@ -76,6 +76,56 @@ module.exports = function(app) {
       })
     })
   })
+
+  // Add Admin
+  app.post(`${endpoint_ver}/admin/add`, checkAuth, (req, res, next) => {
+    const { userData } = req;
+    const { fullname, email, password, is_super_admin, is_accessing_payment_methods, is_accessing_garbage_categories } = req.body;
+
+    if (!userData.is_super_admin || userData.is_super_admin === undefined) {
+      return res.status(403).json(errorResponseHelper(403, 'only superadmin can invite'));
+    } else {
+      // Check the length of password
+      if (password.length < 6) {
+        return res.status(406).json(errorResponseHelper(406, 'password should be at least 6 characters'));
+      }
+
+      Admin.findAll({ where: { email } })
+      .then(admins => {
+        if (admins.length > 0) {
+          return res.status(409).json(errorResponseHelper(409, 'email is already registered'));
+        } else {
+          const newAdmin = Admin.build({
+            fullname,
+            email,
+            password,
+            is_super_admin,
+            is_accessing_payment_methods,
+            is_accessing_garbage_categories
+          });
+
+          bcrypt.genSalt(10, (err, salt) => bcrypt.hash(newAdmin.password, salt, (err, hash) => {
+            if (err) {
+              return res.status(500).json(errorResponseHelper(500, err));
+            }
+
+            newAdmin.password = hash;
+            newAdmin.save()
+            .then(admin => {
+              res.status(201).json({
+                status_code: 201,
+                message: 'new admin has been added',
+                result: admin
+              });
+            })
+            .catch(err => {
+              return res.status(400).json(errorResponseHelper(400, err));
+            });
+          }))
+        }
+      })
+    }
+  });
 
   // Super Admin Signup
   app.post(`${endpoint_ver}/superadmin/signup`, (req, res, next) => {

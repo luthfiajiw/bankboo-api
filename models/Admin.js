@@ -35,9 +35,18 @@ const Admin = connection.define('admin', {
       }
     }
   },
-  is_super_admin: Sequelize.BOOLEAN,
-  is_accessing_garbage_categories: Sequelize.BOOLEAN,
-  is_accessing_payment_methods: Sequelize.BOOLEAN,
+  is_super_admin: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false
+  },
+  is_accessing_garbage_categories: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false
+  },
+  is_accessing_payment_methods: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false
+  },
 }, {underscored: true, timestamps: true});
 
 module.exports = Admin;

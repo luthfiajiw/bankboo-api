@@ -16,7 +16,7 @@ module.exports = function(app) {
     const { page, perPage } = pageQueryHelper(req.query);
     const { is_super_admin } = req.userData;
 
-    if (is_super_admin === undefined || is_super_admin === false) {
+    if (is_super_admin === undefined) {
       return res.status(403).json(errorResponseHelper(403, 'only admin can see the user list'));
     } else {
       User.findAndCountAll({
@@ -63,7 +63,7 @@ module.exports = function(app) {
 
             return res.status(200).json({
               status_code: 200,
-              message: 'authenticaiton successful',
+              message: 'authentication successful',
               type: 'Bearer',
               access_token: token
             })
