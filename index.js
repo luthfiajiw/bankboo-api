@@ -8,6 +8,7 @@ const cors = require('cors');
 const app = express();
 
 const userModel = require('./models/User');
+const adminModel = require('./models/Admin');
 const garbageCategoryModel = require('./models/GarbageCategory');
 const paymentMethodModel = require('./models/PaymentMethod');
 const depositModel = require('./models/Deposit');
@@ -15,6 +16,7 @@ const withdrawalModel = require('./models/Withdrawal');
 const bankCustomerModel = require('./models/BankCustomer');
 
 const userControllers = require('./controllers/userControllers');
+const adminControllers = require('./controllers/adminControllers');
 const bankControllers = require('./controllers/bankControllers');
 const bankCustomerControllers = require('./controllers/bankCustomerControllers');
 const savingBookControllers = require('./controllers/savingBookControllers');
@@ -54,6 +56,7 @@ app.use((req, res, next) => {
 
 // Controllers
 userControllers(app);
+adminControllers(app);
 bankControllers(app);
 bankCustomerControllers(app);
 savingBookControllers(app);

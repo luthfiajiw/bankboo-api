@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/User');
+
+const checkAuth = require('../config/checkAuth');
 const pageQueryHelper = require('../helpers/pageQueryHelper');
 const responseHelper = require('../helpers/responseHelper');
 const paginationHelper = require('../helpers/paginationHelper');
@@ -10,24 +12,31 @@ const { endpoint_ver } = require('../config/url');
 
 module.exports = function(app) {
   // Get customers data
-  app.get(`${endpoint_ver}/user/customers`, (req, res) => {
+  app.get(`${endpoint_ver}/user/customers`, checkAuth, (req, res) => {
     const { page, perPage } = pageQueryHelper(req.query);
-    User.findAndCountAll({
-      limit: perPage,
-      offset: (page - 1) * 10,
-      attributes: { exclude: ['password'] }
-    })
-    .then(customers => {
-      const totalPage = customers.count === 0 ? 1 : Math.ceil(customers.count/perPage);
-      console.log(customers.count);
+    const { is_super_admin } = req.userData;
 
-      const pagination = paginationHelper(page, perPage, totalPage);
-      const datas = {
-        ...customers,
-        ...pagination
-      }
-      responseHelper(res, datas);
-    });
+    if (is_super_admin === undefined || is_super_admin === false) {
+      return res.status(403).json(errorResponseHelper(403, 'only admin can see the user list'));
+    } else {
+      User.findAndCountAll({
+        limit: perPage,
+        offset: (page - 1) * 10,
+        attributes: { exclude: ['password'] }
+      })
+      .then(customers => {
+        const totalPage = customers.count === 0 ? 1 : Math.ceil(customers.count/perPage);
+        console.log(customers.count);
+
+        const pagination = paginationHelper(page, perPage, totalPage);
+        const datas = {
+          ...customers,
+          ...pagination
+        }
+        responseHelper(res, datas);
+      });
+    }
+
   });
 
   // Customer Signin
@@ -78,8 +87,6 @@ module.exports = function(app) {
     if (password !== password2) {
       return res.status(406).json(errorResponseHelper(406, 'password don\'t match'));
     }
-
-    console.log(req.body);
 
     User.findAll({ where: { email: email } })
       .then(user => {
