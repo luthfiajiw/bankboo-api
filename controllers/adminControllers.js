@@ -170,5 +170,6 @@ module.exports = function(app) {
         }))
       }
     })
+    .catch(err => res.status(500).json(errorResponseHelper(500, err)));
   })
 };
