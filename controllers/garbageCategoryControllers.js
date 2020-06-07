@@ -45,7 +45,7 @@ module.exports = function(app) {
       .then(garbageCategory => {
         res.status(201).json({
           status_code: 201,
-          message: "new garbage category has been created",
+          message: "new garbage category has been added",
           result: garbageCategory
         });
       })
@@ -67,7 +67,7 @@ module.exports = function(app) {
       })
       .then(garbageCategory => {
         if (garbageCategory === null) {
-          res.status(404).json(errorResponseHelper(404, 'garbage category not found'));
+          return res.status(404).json(errorResponseHelper(404, 'garbage category not found'));
         }
 
         const updatedGarbageCategory = { category, name };
@@ -94,7 +94,7 @@ module.exports = function(app) {
     }
   });
 
-  // Admin delete a category
+  // Admin deletes a category
   app.delete(`${endpoint_ver}/garbage-categories/:garbageCategoryId`, checkAuth, (req, res, next) => {
     const { is_accessing_garbage_categories } = req.userData;
     const { garbageCategoryId } = req.params;
@@ -110,10 +110,10 @@ module.exports = function(app) {
 
         GarbageCategory.destroy({ where: { id: garbageCategoryId } })
         .then(() => {
-          res.status(200).json({
+          return res.status(200).json({
             status_code: 200,
             message: 'garbage category deleted'
-          })
+          });
         })
       })
     }
