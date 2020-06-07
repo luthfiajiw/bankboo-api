@@ -9,6 +9,7 @@ const GarbageCategory = connection.define('garbage_categories', {
   },
   category: {
     type: Sequelize.ENUM,
+    allowNull: false,
     values: [
       'plastic',
       'paper',
@@ -19,7 +20,10 @@ const GarbageCategory = connection.define('garbage_categories', {
       'iron'
     ]
   },
-  name: Sequelize.STRING,
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
 }, {underscored: true, timestamps: false});
 
 // GarbageCategory.bulkCreate([

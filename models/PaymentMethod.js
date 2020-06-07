@@ -7,8 +7,14 @@ const PaymentMethod = connection.define('payment_methods', {
     primaryKey: true,
     defaultValue: Sequelize.UUIDV4,
   },
-  code: Sequelize.STRING,
-  name: Sequelize.STRING,
+  code: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
 }, {underscored: true, timestamps: false});
 
 // PaymentMethod.bulkCreate([

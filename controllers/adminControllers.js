@@ -75,7 +75,7 @@ module.exports = function(app) {
         }
       })
     })
-  })
+  });
 
   // Add Admin
   app.post(`${endpoint_ver}/admin/add`, checkAuth, (req, res, next) => {
