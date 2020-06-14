@@ -7,10 +7,6 @@ const Bank = connection.define('bank', {
     primaryKey: true,
     defaultValue: Sequelize.UUIDV4,
   },
-  role: {
-    type: Sequelize.ENUM,
-    values: ['bank']
-  },
   code: {
     type: Sequelize.INTEGER,
     defaultValue: Math.floor(100000 + Math.random() * 900000),

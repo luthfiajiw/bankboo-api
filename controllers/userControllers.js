@@ -58,7 +58,6 @@ module.exports = function(app) {
             const token = jwt.sign({
               email: user[0].email,
               user_id: user[0].id,
-              role: user[0].role,
             }, 'secretBankboo');
 
             return res.status(200).json({
@@ -88,7 +87,9 @@ module.exports = function(app) {
       return res.status(406).json(errorResponseHelper(406, 'password don\'t match'));
     }
 
-    User.findAll({ where: { email: email } })
+    User.findAll({
+      where: { email: email },
+    })
       .then(user => {
         if (user.length > 0) {
           return res.status(409).json(errorResponseHelper(409, 'email is already registered'));
@@ -101,7 +102,6 @@ module.exports = function(app) {
           }
 
           const newUser = User.build({
-            role: 'customer',
             first_name: first_name,
             mobile_phone: splitPhone.join(''),
             last_name: last_name,

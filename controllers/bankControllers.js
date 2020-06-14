@@ -49,7 +49,6 @@ module.exports = function(app) {
             const token = jwt.sign({
               email: bank[0].email,
               bank_id: bank[0].id,
-              role: bank[0].role
             }, 'secretBankboo');
 
             return res.status(200).json({
@@ -94,7 +93,6 @@ module.exports = function(app) {
           }
 
           const newBank = Bank.build({
-            role: 'bank',
             name,
             email,
             phone: splitPhone.join(''),
