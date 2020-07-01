@@ -130,6 +130,42 @@ module.exports = function(app) {
     }
   });
 
+  // Bank deletes withdrawal
+  app.delete(`${endpoint_ver}/withdrawals/:withdrawalId`, checkAuth, (req, res, next) => {
+    const { bank_id } = req.userData;
+    const { withdrawalId } = req.params;
+
+    if (bank_id === undefined) {
+      return res.status(403).json(errorResponseHelper(403, 'only banks can change the status'));
+    } else {
+      Withdrawal.findOne({
+        where: { id: withdrawalId }
+      })
+      .then(withdrawal => {
+        if (withdrawal === null) {
+          res.status(404).json(errorResponseHelper(404, 'withdrawal request not found'));
+        }
+
+        if (withdrawal.dataValues.status === 'pending') {
+          Withdrawal.destroy({
+            where: { id: withdrawalId }
+          })
+          .then(() => {
+            return res.status(200).json({
+              status_code: 200,
+              message: 'withdrawal deleted'
+            });
+          })
+          .catch(err => {
+            return res.status(500).json(errorResponseHelper(500, err));
+          })
+        } else {
+          return res.status(403).json(errorResponseHelper(403, `withdrawal with ${withdrawal.dataValues.status} status can't be deleted`));
+        }
+      })
+    }
+  })
+
   // Detail Withdrawal
   app.get(`${endpoint_ver}/withdrawals/:withdrawalId`, checkAuth, (req, res, next) => {
     const { withdrawalId } = req.params;
