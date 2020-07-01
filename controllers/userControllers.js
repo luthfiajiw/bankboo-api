@@ -46,7 +46,7 @@ module.exports = function(app) {
     User.findAll({ where: { email } })
       .then(user => {
         if (user.length < 1) {
-          return res.status(404).json(errorResponseHelper(404, 'email is not registered'))
+          return res.status(404).json(errorResponseHelper(404, 'authentication failed, email is not registered'))
         }
 
         bcrypt.compare(password, user[0].password, (err, isMatch) => {
@@ -67,7 +67,7 @@ module.exports = function(app) {
               access_token: token
             })
           } else {
-            return res.status(401).json(errorResponseHelper(401, 'authentication failed, please check you email or password'))
+            return res.status(401).json(errorResponseHelper(401, 'authentication failed, please check your password'))
           }
         })
       })
