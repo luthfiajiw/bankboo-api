@@ -136,7 +136,7 @@ module.exports = function(app) {
     const { withdrawalId } = req.params;
 
     if (bank_id === undefined) {
-      return res.status(403).json(errorResponseHelper(403, 'only banks can change the status'));
+      return res.status(403).json(errorResponseHelper(403, 'only banks can delete withdrawals'));
     } else {
       Withdrawal.findOne({
         where: { id: withdrawalId }
@@ -164,7 +164,7 @@ module.exports = function(app) {
         }
       })
     }
-  })
+  });
 
   // Detail Withdrawal
   app.get(`${endpoint_ver}/withdrawals/:withdrawalId`, checkAuth, (req, res, next) => {
