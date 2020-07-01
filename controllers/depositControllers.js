@@ -76,7 +76,7 @@ module.exports = function(app) {
     const { depositId } = req.params;
 
     if (bank_id === undefined) {
-      return res.status(403).json(errorResponseHelper(403, 'only banks can change the status'));
+      return res.status(403).json(errorResponseHelper(403, 'only banks can delete deposits'));
     } else {
       Deposit.findOne({
         where: { id: depositId }
@@ -127,6 +127,42 @@ module.exports = function(app) {
       });
     }
 
+  });
+
+  // Bank delets deposit
+  app.delete(`${endpoint_ver}/deposits/:depositId`, checkAuth, (req, res, next) => {
+    const { bank_id } = req.userData;
+    const { depositId } = req.params;
+
+    if (bank_id === undefined) {
+      return res.status(403).json(errorResponseHelper(403, 'only banks can change the status'));
+    } else {
+      Deposit.findOne({
+        where: { id: depositId }
+      })
+      .then(deposit => {
+        if (deposit === null) {
+          res.status(404).json(errorResponseHelper(404, 'deposit request not found'));
+        }
+
+        if (deposit.dataValues.status === 'pending') {
+          Deposit.destroy({
+            where: { id: depositId }
+          })
+          .then(() => {
+            return res.status(200).json({
+              status_code: 200,
+              message: 'deposit deleted'
+            });
+          })
+          .catch(err => {
+            return res.status(500).json(errorResponseHelper(500, err));
+          })
+        } else {
+          return res.status(403).json(errorResponseHelper(403, `deposit with ${deposit.dataValues.status} status can't be deleted`));
+        }
+      })
+    }
   });
 
   // Detail Deposit
