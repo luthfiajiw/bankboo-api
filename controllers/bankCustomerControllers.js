@@ -15,11 +15,11 @@ let moment = require('moment');
 
 module.exports = function(app) {
   app.get(`${endpoint_ver}/bank-customers`, checkAuth, (req, res, next) => {
-    const { bank_id } = req.userData;
+    const { bank_id, user_id } = req.userData;
     const { page, perPage } = pageQueryHelper(req.query);
 
     BankCustomer.findAndCountAll({
-      where: { bank_id },
+      where: bank_id == undefined ? { user_id } : { bank_id },
       limit: perPage,
       offset: (page - 1) * 10,
       attributes: { exclude: ['user_id', 'bank_id', 'saving_book_id'] },
@@ -50,6 +50,10 @@ module.exports = function(app) {
       }
       responseHelper(res, datas);
     })
+    .catch(err => {
+      console.log(err);
+      res.status(400).json(errorResponseHelper(400, 'invalid bank_id or user_id'));
+    });
   });
 
   // User request to be a customer

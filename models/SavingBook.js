@@ -15,7 +15,7 @@ const SavingBook = connection.define('saving_books', {
     defaultValue: Math.floor(100000 + Math.random() * 900000)
   },
   balance:{
-    type:  Sequelize.BIGINT,
+    type:  Sequelize.INTEGER,
     defaultValue: 0
   },
 }, {underscored: true, timestamps: true});

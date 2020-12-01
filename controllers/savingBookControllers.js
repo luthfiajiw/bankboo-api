@@ -89,7 +89,7 @@ module.exports = function(app) {
 
     SavingBook.findOne({
       where: { id: savingBookId },
-      attributes: { exclude: ['customer_id', 'bank_id'] },
+      attributes: { exclude: ['user_id', 'bank_id'] },
       include: [
         {
           model: User,
