@@ -39,6 +39,30 @@ module.exports = function(app) {
 
   });
 
+  // Checking user email
+  app.post(`${endpoint_ver}/customers/is-existed-email`, (req, res) => {
+    const { email } = req.body;
+
+    User.findAll({ where: { email } })
+      .then(user => {
+        if (user.length < 1) {
+          return res.status(200).json({
+            status_code: 200,
+            message: 'email is available',
+            email,
+            is_existed_email: false
+          });
+        }
+
+        return res.status(200).json({
+          status_code: 200,
+          message: 'email is not available',
+          email,
+          is_existed_email: true
+        });
+      })
+  });
+
   // Customer Signin
   app.post(`${endpoint_ver}/customer/signin`, (req, res, next) => {
     const { email, password } = req.body;

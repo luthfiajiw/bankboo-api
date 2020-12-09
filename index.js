@@ -1,5 +1,4 @@
 const express = require('express');
-const http = require('http');
 const connection = require('./config/connection');
 const helmet = require('helmet');
 const compression = require('compression');
@@ -66,7 +65,7 @@ garbageCategoryControllers(app);
 paymentMethodControllers(app);
 
 connection
-  .sync()
+  .authenticate()
   .then(() => {
     const server = app.listen(process.env.PORT || 3000, () => {
       console.log('Your port is listening to localhost 3000');

@@ -1,12 +1,12 @@
 const Sequelize = require('sequelize');
-const config = require('../server/config/config');
+const config = require('./config');
 require('dotenv').config();
 
 const isProd = process.env.NODE_ENV === 'production';
 
 const host = isProd ? config.production.host : config.development.host;
 const database = isProd ? config.production.database : config.development.database;
-const user = isProd ? config.production.user : config.development.user;
+const user = isProd ? config.production.username : config.development.username;
 const password = isProd ? config.production.password : config.development.password;
 const port = isProd ? config.production.port : config.development.port;
 
@@ -15,7 +15,7 @@ const connection = new Sequelize(
   user,
   password, {
   host: host,
-  dialect: 'postgres'
+  dialect: 'postgres',
 });
 
 module.exports = connection;
