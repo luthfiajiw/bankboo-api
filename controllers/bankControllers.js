@@ -40,7 +40,6 @@ module.exports = function(app) {
       where: { user_id },
     })
     .then(bankCustomers => {
-      console.log(bankCustomers.rows[0].dataValues);
       Bank.findAndCountAll({
         limit: perPage,
         offset: (page - 1) * 10,
@@ -51,10 +50,11 @@ module.exports = function(app) {
         const pagination = paginationHelper(page, perPage, totalPage);
 
         const registeredCustomerChecking = banks.rows.map(e => {
+          let bankCustomer = bankCustomers.rows.find(x => x.dataValues.bank_id == e.dataValues.id);
           return {
             ...e.dataValues,
             relationships: {
-              registered_as_customer: bankCustomers.rows.find(x => x.dataValues.bank_id == e.dataValues.id) != undefined
+              registered_as_customer: bankCustomer != undefined && bankCustomer.status === 'approved'
             }
           }
         })
