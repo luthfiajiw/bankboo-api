@@ -80,7 +80,7 @@ module.exports = function(app) {
     })
   });
 
-  // Bank accept customer request, change the status and create saving book for customer
+  // Bank accept customer request, change the status and create saving book for the customer
   app.patch(`${endpoint_ver}/bank-customers/:bankCustomerId`, checkAuth, (req, res, next) => {
     const { bank_id } = req.userData;
     const { user_id } = req.body;

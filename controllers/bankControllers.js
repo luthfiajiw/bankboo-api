@@ -1,12 +1,15 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const checkAuth = require('../config/checkAuth');
 const Bank = require('../models/Bank');
 const pageQueryHelper = require('../helpers/pageQueryHelper');
 const responseHelper = require('../helpers/responseHelper');
 const paginationHelper = require('../helpers/paginationHelper');
 const errorResponseHelper = require('../helpers/errorResponseHelper');
 const { endpoint_ver } = require('../config/url');
+const BankCustomer = require('../models/BankCustomer');
+const e = require('express');
 
 module.exports = function(app) {
   // Get banks data
@@ -19,8 +22,6 @@ module.exports = function(app) {
     })
     .then(banks => {
       const totalPage = banks.count === 0 ? 1 : Math.ceil(banks.count/perPage);
-      console.log(banks.count);
-
       const pagination = paginationHelper(page, perPage, totalPage);
       const datas = {
         ...banks,
@@ -28,6 +29,51 @@ module.exports = function(app) {
       }
       responseHelper(res, datas);
     });
+  });
+
+  // Get banks data with relationship status
+  app.get(`${endpoint_ver}/relationships/banks`, checkAuth, (req, res) => {
+    const { user_id } = req.userData;
+    const { page, perPage } = pageQueryHelper(req.query);
+
+    BankCustomer.findAndCountAll({
+      where: { user_id },
+    })
+    .then(bankCustomers => {
+      console.log(bankCustomers.rows[0].dataValues);
+      Bank.findAndCountAll({
+        limit: perPage,
+        offset: (page - 1) * 10,
+        attributes: { exclude: ['password'] }
+      })
+      .then(banks => {
+        const totalPage = banks.count === 0 ? 1 : Math.ceil(banks.count/perPage);
+        const pagination = paginationHelper(page, perPage, totalPage);
+
+        const registeredCustomerChecking = banks.rows.map(e => {
+          return {
+            ...e.dataValues,
+            relationships: {
+              registered_as_customer: bankCustomers.rows.find(x => x.dataValues.bank_id == e.dataValues.id) != undefined
+            }
+          }
+        })
+
+        const transformed = {
+          ...banks,
+          rows: registeredCustomerChecking
+        }
+
+        const datas = {
+          ...transformed,
+          ...pagination
+        }
+        responseHelper(res, datas);
+      });
+    })
+    .catch(err => {
+      console.log(err);
+    })
   });
 
   // Bank Signin
