@@ -65,7 +65,7 @@ garbageCategoryControllers(app);
 paymentMethodControllers(app);
 
 connection
-  .authenticate()
+  .sync()
   .then(() => {
     const port = process.env.PORT || 3000
     app.listen(port, () => {
