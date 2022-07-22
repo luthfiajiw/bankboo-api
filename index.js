@@ -67,11 +67,9 @@ paymentMethodControllers(app);
 connection
   .authenticate()
   .then(() => {
-    const isProd = process.env.NODE_ENV === "production"
-    const port = isProd ? process.env.PROD_DB_PORT : process.env.DEV_DB_PORT
-
+    const port = process.env.PORT || 3000
     app.listen(port, () => {
-      console.log('Your port is listening to localhost 3000 ', process.env.NODE_ENV);
+      console.log(`Your port is listening to port ${port}`, process.env.NODE_ENV);
     });
   })
   // .then(() => {
