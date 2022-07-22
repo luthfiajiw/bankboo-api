@@ -68,7 +68,8 @@ connection
   .authenticate()
   .then(() => {
     const server = app.listen(process.env.PORT || 3000, () => {
-      console.log('Your port is listening to localhost 3000');
+      
+      console.log('Your port is listening to localhost 3000 ', process.env.NODE_ENV);
     });
   })
   // .then(() => {
